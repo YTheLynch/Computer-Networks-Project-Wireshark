@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>PCAP Analysis Results</title>
+</head>
+<body>
+  <h1>Analysis Results</h1>
+  <pre>{{ plot1text }}</pre>
+  <h2>Port Distribution</h2>
+  <img src="{{ url_for('static', filename='plot1.png') }}">
+  <a href="{{ url_for('index') }}">Upload Another File</a>
+  <img src="{{ url_for('static', filename='plot2.png') }}">
+  <img src="{{ url_for('static', filename='plot3.png') }}">
+  <img src="{{ url_for('static', filename='plot4.png') }}">
+  <img src="{{ url_for('static', filename='plot5.png') }}">
+  <img src="{{ url_for('static', filename='plot6.png') }}">
+</body>
+</html>
