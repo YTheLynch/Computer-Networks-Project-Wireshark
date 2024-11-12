@@ -1,18 +1,72 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>PCAP Analysis Results</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue JAY - Analysis Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Analysis Results</h1>
-  <pre>{{ plot1text }}</pre>
-  <h2>Port Distribution</h2>
-  <img src="{{ url_for('static', filename='plot1.png') }}">
-  <a href="{{ url_for('index') }}">Upload Another File</a>
-  <img src="{{ url_for('static', filename='plot2.png') }}">
-  <img src="{{ url_for('static', filename='plot3.png') }}">
-  <img src="{{ url_for('static', filename='plot4.png') }}">
-  <img src="{{ url_for('static', filename='plot5.png') }}">
-  <img src="{{ url_for('static', filename='plot6.png') }}">
+<body class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen text-white flex flex-col items-center p-4">
+
+  <!-- Header Section -->
+  <header class="w-full max-w-6xl mb-8 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <h1 class="text-2xl font-bold">Blue JAY - Analysis Dashboard</h1>
+    </div>
+    <a href="/" class="text-blue-400 hover:underline">Back to Upload Page</a>
+  </header>
+
+  <!-- Cards Container -->
+  <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
+    
+    <!-- Card 1 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot1.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot1text }}</pre>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot2.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot2text }}</pre>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot3.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot3text }}</pre>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot4.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot4text }}</pre>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot5.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot5text }}</pre>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition duration-300 ease-in-out">
+      <div class="bg-gray-700 rounded-lg h-72 flex items-center justify-center">
+        <img src="{{ url_for('static', filename='plot6.png') }}">
+      </div>
+      <pre class = "text-wrap">{{ plot6text }}</pre>
+    </div>
+  </div>
+
 </body>
 </html>

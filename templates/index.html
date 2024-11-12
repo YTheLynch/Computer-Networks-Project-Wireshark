@@ -1,13 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>PCAP File Analyzer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blue JAY - PCAP Analysis</title>
+  <link rel="icon" href="logo.png" type="image/png"> <!-- Favicon link -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    input#file-upload-button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body>
-  <h1>Upload PCAP File</h1>
-  <form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <button type="submit">Analyze</button>
-  </form>
+<body class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen flex items-center justify-center text-white">
+    <!-- Website Branding and Logo -->
+    <div class="absolute top-4 left-4 bg-blue-500 h-20 w-48 flex items-center justify-center shadow-2xl rounded-e-full">
+        <h1 class="text-2xl font-bold text-white">Blue JAY</h1>
+    </div>
+  <!-- Main Container -->
+  <div class="max-w-lg w-full bg-gray-800 rounded-3xl shadow-lg p-8 relative overflow-hidden">
+    <h2 class="text-center text-2xl font-extrabold mt-14 mb-14">Upload Your PCAP File for Analysis</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <!-- Upload Area -->
+      <div class="border-4 border-dashed border-gray-600 hover:border-blue-500 rounded-lg transition duration-200 ease-in-out p-8 text-center mb-6 relative">
+        <p class="text-gray-400 mb-2">Drag & Drop your file here</p>
+        <p class="text-gray-600 mb-4">or</p>
+        
+        <!-- Choose File Button -->
+          <label class="cursor-pointer inline-block bg-blue-600 hover:bg-blue-700 transition duration-200 ease-in-out text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:shadow-lg">
+            <!-- <span>Select File</span> -->
+            <input type="file" class = "" name="file" accept = ".pcap">
+          </label>
+        
+        
+        <!-- Animated Icon (optional, for aesthetics) -->
+        <div class="absolute bottom-0 right-0 mb-2 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-500 animate-bounce" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 01.832.445L12 6h5a1 1 0 01.832 1.555l-5.5 7a1 1 0 01-1.664 0l-5.5-7A1 1 0 015 6h5L8.168 2.445A1 1 0 019 2z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- File Restrictions -->
+      <p class="text-sm text-gray-400 mb-4 text-center">Supported Format: .pcap | Max Size: 10MB</p>
+
+      <!-- Analyze Button -->
+      <button type = "submit" class="w-full py-3 bg-gradient-to-r from-blue-500 to-teal-400 hover:from-blue-600 hover:to-teal-500 transition-all duration-200 ease-in-out rounded-xl font-semibold shadow-lg transform hover:scale-105">
+        Analyze File
+      </button>
+    </form>
+    <!-- Footer -->
+    <div class="text-center mt-6">
+      <p class="text-xs text-gray-500">2024 Blue JAY.</p>
+    </div>
+  </div>
 </body>
 </html>
