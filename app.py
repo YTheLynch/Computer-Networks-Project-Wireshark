@@ -23,8 +23,8 @@ def upload_file():
     if file.filename == '':
         return redirect(url_for('index'))
     if file:
-        plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count = analyze_pcap(file)
-        generate_plots(protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count)
+        plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count = analyze_pcap(file)
+        generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count)
         return render_template('results.html', plot1text=plot1text, plot2text=plot2text, plot3text=plot3text, plot4text=plot4text, plot5text=plot5text, plot6text=plot6text)
 
 
@@ -61,6 +61,7 @@ def analyze_pcap(file):
             protocol_name = layer.__name__  
             protocol_counts[protocol_name] += 1
 
+    sorted_protocol_counts = sorted(protocol_counts.items(), key = lambda x: x[1], reverse = True)
 
     ip_src_counts = Counter(packet['IP'].src for packet in packets if packet.haslayer('IP'))
     ip_dst_counts = Counter(packet['IP'].dst for packet in packets if packet.haslayer('IP'))
@@ -74,21 +75,21 @@ def analyze_pcap(file):
     sorted_tcp_ports = sorted(tcp_ports.items(), key=lambda x: x[1], reverse=True)
     sorted_udp_ports = sorted(udp_ports.items(), key=lambda x: x[1], reverse=True)
 
-    plot1text = "Protocol Counts:\n" + '\n'.join(f"{protocol}: {count}" for protocol, count in protocol_counts.items())
-    plot2text = "Source IP Distribution\n" + '\n'.join(f"{i[0]}: {i[1]}" for i in sorted_ip_src_counts)
-    plot3text = "Destination IP Distribution\n" + '\n'.join(f"{i[0]}: {i[1]}" for i in sorted_ip_dst_counts)
-    plot4text = "TCP Port Wise Packet Counts\n" + '\n'.join(f"Port {i[0]}: {i[1]} packets" for i in sorted_tcp_ports)
-    plot5text = "UDP Port Wise Packet Counts\n" + '\n'.join(f"Port {i[0]}: {i[1]} packets" for i in sorted_udp_ports)
-    plot6text = "SYN Packet Count per IP\n" + '\n'.join(f"{i[0]}: {i[1]}" for i in syn_count.items())
-    plot6text += "\n\nSYN ACK Packet Count per IP\n" + '\n'.join(f"{i[0]}: {i[1]}" for i in syn_ack_count.items())
+    plot1text = "Protocol Counts:-\n" + ', '.join(f"{i[0]}: {i[1]}" for i in sorted_protocol_counts)
+    plot2text = "Source IP Distribution:-\n" + ', '.join(f"{i[0]}: {i[1]}" for i in sorted_ip_src_counts)
+    plot3text = "Destination IP Distribution:-\n" + ', '.join(f"{i[0]}: {i[1]}" for i in sorted_ip_dst_counts)
+    plot4text = "TCP Port Wise Packet Counts:-\n" + ', '.join(f"Port {i[0]}: {i[1]} packets" for i in sorted_tcp_ports)
+    plot5text = "UDP Port Wise Packet Counts:-\n" + ', '.join(f"Port {i[0]}: {i[1]} packets" for i in sorted_udp_ports)
+    plot6text = "SYN Packet Count per IP:-\n" + ', '.join(f"{i[0]}: {i[1]}" for i in syn_count.items())
+    plot6text += "\n\nSYN ACK Packet Count per IP:-\n" + ', '.join(f"{i[0]}: {i[1]}" for i in syn_ack_count.items())
 
-    return plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count
+    return plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count
 
-def generate_plots(protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count):
+def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count):
 
-    plt.figure(figsize=(18, 6))
-    plt.bar(protocol_counts.keys(), protocol_counts.values(), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'])
-    for i, value in enumerate(protocol_counts.values()):
+    plt.figure(figsize=(18, 9.5))
+    plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_protocol_counts], 7), showFirstNAddRest([i[1] for i in sorted_protocol_counts], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'])
+    for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_protocol_counts], 7)):
         plt.text(i, value + 0.5, str(value), ha='center', va='bottom')
     plt.xlabel('Protocol Name')
     plt.ylabel('Packet Count')
@@ -96,21 +97,21 @@ def generate_plots(protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, 
     plt.savefig(os.path.join('static', 'plot1.png'))
     plt.close()
 
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_src_counts], 9), labels = showFirstNAppendOthers([str(i[0]) for i in sorted_ip_src_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Source IP Distribution')
     plt.savefig(os.path.join('static', 'plot2.png'))
     plt.close()
 
-    plt.figure(figsize=(15, 10))
+    plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_dst_counts], 9), labels = showFirstNAppendOthers([i[0] for i in sorted_ip_dst_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Destination IP Distribution')
     plt.savefig(os.path.join('static', 'plot3.png'))
     plt.close()
 
-    plt.figure(figsize=(18, 6))
+    plt.figure(figsize=(18, 9.5))
     plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_tcp_ports], 7), showFirstNAddRest([i[1] for i in sorted_tcp_ports], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'], )
     plt.xlabel('TCP Port')
     plt.ylabel('Packet Count')
@@ -120,7 +121,7 @@ def generate_plots(protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, 
     plt.savefig(os.path.join('static', 'plot4.png'))
     plt.close()
 
-    plt.figure(figsize=(18, 6))
+    plt.figure(figsize=(18, 9.5))
     plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_udp_ports], 7), showFirstNAddRest([i[1] for i in sorted_udp_ports], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'])
     plt.xlabel('UDP Port')
     plt.ylabel('Packet Count')
@@ -130,6 +131,7 @@ def generate_plots(protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, 
     plt.savefig(os.path.join('static', 'plot5.png'))
     plt.close()
 
+    plt.figure(figsize=(18, 9.5))
     plt.hist([list(syn_count.keys()), list(syn_ack_count.keys())], weights = [list(syn_count.values()), list(syn_ack_count.values())], label = ['SYN count', 'SYN ACK count'])
     plt.legend()
     plt.savefig(os.path.join('static', 'plot6.png'))
