@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route('/images/<path:filename>')
 def serve_images(filename):
-    return send_from_directory('tmp', filename)
+    return send_from_directory('/tmp', filename)
 
 @app.route('/')
 def index():
@@ -95,21 +95,21 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.xlabel('Protocol Name')
     plt.ylabel('Packet Count')
     plt.title('Protocol - Wise Packet Counts')
-    plt.savefig(os.path.join('tmp', 'plot1.png'))
+    plt.savefig(os.path.join('/tmp', 'plot1.png'))
     plt.close()
 
     plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_src_counts], 9), labels = showFirstNAppendOthers([str(i[0]) for i in sorted_ip_src_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Source IP Distribution')
-    plt.savefig(os.path.join('tmp', 'plot2.png'))
+    plt.savefig(os.path.join('/tmp', 'plot2.png'))
     plt.close()
 
     plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_dst_counts], 9), labels = showFirstNAppendOthers([i[0] for i in sorted_ip_dst_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Destination IP Distribution')
-    plt.savefig(os.path.join('tmp', 'plot3.png'))
+    plt.savefig(os.path.join('/tmp', 'plot3.png'))
     plt.close()
 
     plt.figure(figsize=(18, 9.5))
@@ -119,7 +119,7 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.title('TCP Port - Wise Packet Counts')
     for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_tcp_ports], 7)):
         plt.text(i, value + 0.5, str(value), ha='center', va='bottom')
-    plt.savefig(os.path.join('tmp', 'plot4.png'))
+    plt.savefig(os.path.join('/tmp', 'plot4.png'))
     plt.close()
 
     plt.figure(figsize=(18, 9.5))
@@ -129,13 +129,13 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.title('UDP Port - Wise Packet Counts')
     for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_udp_ports], 7)):
         plt.text(i, value + 0.5, str(value), ha='center', va='bottom')
-    plt.savefig(os.path.join('tmp', 'plot5.png'))
+    plt.savefig(os.path.join('/tmp', 'plot5.png'))
     plt.close()
 
     plt.figure(figsize=(18, 9.5))
     plt.hist([list(syn_count.keys()), list(syn_ack_count.keys())], weights = [list(syn_count.values()), list(syn_ack_count.values())], label = ['SYN count', 'SYN ACK count'])
     plt.legend()
-    plt.savefig(os.path.join('tmp', 'plot6.png'))
+    plt.savefig(os.path.join('/tmp', 'plot6.png'))
     plt.close()
 
 if __name__ == '__main__':
