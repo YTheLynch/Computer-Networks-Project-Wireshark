@@ -5,6 +5,8 @@ from collections import Counter
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__)
 
@@ -25,8 +27,8 @@ def upload_file():
         return redirect(url_for('index'))
     if file:
         plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count = analyze_pcap(file)
-        generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count)
-        return render_template('results.html', plot1text=plot1text, plot2text=plot2text, plot3text=plot3text, plot4text=plot4text, plot5text=plot5text, plot6text=plot6text)
+        img1, img2, img3, img4, img5, img6 = generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count)
+        return render_template('results.html', plot1text=plot1text, plot2text=plot2text, plot3text=plot3text, plot4text=plot4text, plot5text=plot5text, plot6text=plot6text, img1 = img1, img2 = img2, img3 = img3, img4 = img4, img5 = img5, img6 = img6)
 
 
 def showFirstNAddRest(arr, n):
@@ -87,7 +89,7 @@ def analyze_pcap(file):
     return plot1text, plot2text, plot3text, plot4text, plot5text, plot6text, sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count
 
 def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_counts, sorted_tcp_ports, sorted_udp_ports, syn_count, syn_ack_count):
-
+    buf1 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_protocol_counts], 7), showFirstNAddRest([i[1] for i in sorted_protocol_counts], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'])
     for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_protocol_counts], 7)):
@@ -95,23 +97,30 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.xlabel('Protocol Name')
     plt.ylabel('Packet Count')
     plt.title('Protocol - Wise Packet Counts')
-    plt.savefig(os.path.join('/tmp', 'plot1.png'))
+    plt.savefig(buf1, format = 'png')
+    buf1.seek(0)
     plt.close()
 
+    buf2 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_src_counts], 9), labels = showFirstNAppendOthers([str(i[0]) for i in sorted_ip_src_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Source IP Distribution')
-    plt.savefig(os.path.join('/tmp', 'plot2.png'))
+    plt.savefig(buf2, format = 'png')
+    buf2.seek(0)
     plt.close()
 
+    buf3 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.pie(showFirstNAddRest([i[1] for i in sorted_ip_dst_counts], 9), labels = showFirstNAppendOthers([i[0] for i in sorted_ip_dst_counts], 9), autopct='%1.1f%%',pctdistance=0.9)
     plt.legend()
     plt.title('Destination IP Distribution')
-    plt.savefig(os.path.join('/tmp', 'plot3.png'))
+    plt.savefig(buf3, format = 'png')
+    buf3.seek(0)
     plt.close()
 
+
+    buf4 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_tcp_ports], 7), showFirstNAddRest([i[1] for i in sorted_tcp_ports], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'], )
     plt.xlabel('TCP Port')
@@ -119,9 +128,11 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.title('TCP Port - Wise Packet Counts')
     for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_tcp_ports], 7)):
         plt.text(i, value + 0.5, str(value), ha='center', va='bottom')
-    plt.savefig(os.path.join('/tmp', 'plot4.png'))
+    plt.savefig(buf4, format = 'png')
+    buf4.seek(0)
     plt.close()
 
+    buf5 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.bar(showFirstNAppendOthers([str(i[0]) for i in sorted_udp_ports], 7), showFirstNAddRest([i[1] for i in sorted_udp_ports], 7), color=['blue', 'green', 'red', 'yellow', 'purple', 'brown'])
     plt.xlabel('UDP Port')
@@ -129,14 +140,34 @@ def generate_plots(sorted_protocol_counts, sorted_ip_src_counts, sorted_ip_dst_c
     plt.title('UDP Port - Wise Packet Counts')
     for i, value in enumerate(showFirstNAddRest([i[1] for i in sorted_udp_ports], 7)):
         plt.text(i, value + 0.5, str(value), ha='center', va='bottom')
-    plt.savefig(os.path.join('/tmp', 'plot5.png'))
+    plt.savefig(buf5, format = 'png')
+    buf5.seek(0)
     plt.close()
 
+    buf6 = io.BytesIO()
     plt.figure(figsize=(18, 9.5))
     plt.hist([list(syn_count.keys()), list(syn_ack_count.keys())], weights = [list(syn_count.values()), list(syn_ack_count.values())], label = ['SYN count', 'SYN ACK count'])
     plt.legend()
-    plt.savefig(os.path.join('/tmp', 'plot6.png'))
+    plt.savefig(buf6, format = 'png')
+    buf6.seek(0)
     plt.close()
+
+
+    img1_base64 = base64.b64encode(buf1.getvalue()).decode('utf-8')
+    img2_base64 = base64.b64encode(buf2.getvalue()).decode('utf-8')
+    img3_base64 = base64.b64encode(buf3.getvalue()).decode('utf-8')
+    img4_base64 = base64.b64encode(buf4.getvalue()).decode('utf-8')
+    img5_base64 = base64.b64encode(buf5.getvalue()).decode('utf-8')
+    img6_base64 = base64.b64encode(buf6.getvalue()).decode('utf-8')
+
+    buf1.close()
+    buf2.close()
+    buf3.close()
+    buf4.close()
+    buf5.close()
+    buf6.close()
+
+    return img1_base64, img2_base64, img3_base64, img4_base64, img5_base64, img6_base64
 
 if __name__ == '__main__':
     app.run(debug=True)
