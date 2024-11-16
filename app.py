@@ -8,10 +8,6 @@ import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
-@app.route('/images/<path:filename>')
-def serve_images(filename):
-    return send_from_directory('/tmp', filename)
-
 @app.route('/')
 def index():
     return render_template('index.html')
