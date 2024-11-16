@@ -1,3 +1,4 @@
 pcap-files/
 .vercel
 static/*.png
+tmp/
