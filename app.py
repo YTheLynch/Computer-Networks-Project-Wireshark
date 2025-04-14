@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, redirect, url_for, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for
 from scapy.all import rdpcap
 from collections import Counter
 import matplotlib
